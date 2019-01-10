@@ -90,11 +90,11 @@ public class ColaboratorController {
         output.setWriters(new ArrayList<>());
 
         colaborators.forEach(e -> {
-            if(e.getRole().contains("writer"))
+            if(e.getRole().contains("writer") && !output.getWriters().contains(e.getName()))
                 output.getWriters().add(e.getName());
-            if(e.getRole().contains("colorist"))
+            if(e.getRole().contains("colorist") && !output.getColorists().contains(e.getName()))
                 output.getColorists().add(e.getName());
-            if(e.getRole().contains("editor"))
+            if(e.getRole().contains("editor") && !output.getEditors().contains(e.getName()))
                 output.getEditors().add(e.getName());
         });
         return output;
