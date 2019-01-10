@@ -10,28 +10,36 @@ public class Creator {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idcreators;
 
-    @Column(name = "creator_name")
-    private String creator_name;
+    @Column(name = "CreatorName")
+    private String creatorName;
 
-    @Column(name = "creator_role")
-    private String creator_role;
+    @Column(name = "CreatorRole")
+    private String CreatorRole;
 
     @Column(name = "hero")
     private long hero;
 
-    public String getCreator_name() {
-        return creator_name;
+    public String getCreatorName() {
+        return creatorName;
     }
 
-    public void setCreator_name(String creator_name) {
-        this.creator_name = creator_name;
+    public void setCreatorName(String CreatorName) {
+        this.creatorName = CreatorName;
     }
 
-    public String getCreator_role() {
-        return creator_role;
+    public String getCreatorRole() {
+        return CreatorRole;
     }
 
-    public void setCreator_role(String creator_role) {
-        this.creator_role = creator_role;
+    public void setCreatorRole(String CreatorRole) {
+        this.CreatorRole = CreatorRole;
+    }
+
+    public long getHero() {
+        return hero;
+    }
+
+    public void setHero(long hero) {
+        this.hero = hero;
     }
 }

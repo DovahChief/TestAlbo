@@ -12,7 +12,7 @@ public class HeroCatalog {
     private Long idHeroCatalog;
 
     @Column(name = "HeroName")
-    private String HeroName;
+    private String heroName;
 
 
     @OneToMany(cascade= CascadeType.ALL)
@@ -20,11 +20,11 @@ public class HeroCatalog {
     private List<Creator> creators;
 
     public String getHeroName() {
-        return HeroName;
+        return heroName;
     }
 
     public void setHeroName(String heroName) {
-        HeroName = heroName;
+        heroName = heroName;
     }
 
     public List<Creator> getCreators() {
@@ -33,5 +33,9 @@ public class HeroCatalog {
 
     public void setCreators(List<Creator> creators) {
         this.creators = creators;
+    }
+
+    public Long getIdHeroCatalog() {
+        return idHeroCatalog;
     }
 }

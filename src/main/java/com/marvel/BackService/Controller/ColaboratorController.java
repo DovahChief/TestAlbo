@@ -8,6 +8,9 @@ import com.marvel.BackService.Model.ApiREsponses.comics.ApiResult;
 import com.marvel.BackService.Model.ApiREsponses.comics.Item;
 import com.marvel.BackService.Model.ApiREsponses.comics.Characters;
 import com.marvel.BackService.Model.ApiREsponses.comics.Comic;
+import com.marvel.BackService.Model.Database.Repository.CreatorsRepository;
+import com.marvel.BackService.Model.Database.Repository.HeroCatalogRepository;
+import com.marvel.BackService.Model.Database.Tables.Creator;
 import com.marvel.BackService.Model.JsonOut.ColaboratorsOut;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,6 +39,12 @@ public class ColaboratorController {
     @Autowired
     private CharacterController characterController;
 
+    @Autowired
+    private CreatorsRepository creatorsRepository;
+
+    @Autowired
+    private HeroCatalogRepository heroCatalogRepository;
+
     @GetMapping("/byID/{id}")
     public ResponseEntity<List<ApiResult>> getColaboratos(@PathVariable Long id){
         List<ApiResult> results = null;
@@ -55,6 +64,7 @@ public class ColaboratorController {
             Integer heroId = characterController.getCharacters(hero).getBody().get(0).getId();
             ApiResponse_Comics comics = this.apiRequest.GetRequest(baseUrl + "characters/" + heroId + "/comics", ApiResponse_Comics.class);
             List<Item> creators = this.extractCreators(comics.getData().getResult());
+            saveColaborator(creators, hero);
             ColaboratorsOut output = this.formatOutput(creators);
             output.setLastSync(comics.getData().getResult().get(0).getModified());
             return  new ResponseEntity<>(output, HttpStatus.OK);
@@ -73,13 +83,13 @@ public class ColaboratorController {
                 .collect(Collectors.toList());
     }
 
-    private ColaboratorsOut formatOutput(List<Item> collaborators){
+    private ColaboratorsOut formatOutput(List<Item> colaborators){
         ColaboratorsOut output = new ColaboratorsOut();
         output.setColorists(new ArrayList<>());
         output.setEditors(new ArrayList<>());
         output.setWriters(new ArrayList<>());
 
-        collaborators.forEach(e -> {
+        colaborators.forEach(e -> {
             if(e.getRole().contains("writer"))
                 output.getWriters().add(e.getName());
             if(e.getRole().contains("colorist"))
@@ -89,4 +99,19 @@ public class ColaboratorController {
         });
         return output;
     }
+
+    private void saveColaborator(List<Item> colaborators, String heroName){
+        if (heroCatalogRepository.findByHeroName(heroName).isPresent()){
+            colaborators.forEach(e -> {
+                if(!creatorsRepository.findByCreatorName(e.getName()).isPresent()){
+                    Creator c = new Creator();
+                    c.setCreatorName(e.getName());
+                    c.setCreatorRole(e.getRole());
+                    c.setHero(heroCatalogRepository.findByHeroName(heroName).get().getIdHeroCatalog());
+                    creatorsRepository.save(c);
+                }
+            });
+        }
+    }
+
 }
